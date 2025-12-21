@@ -50,7 +50,7 @@ export default function Home() {
                 <Shield className="w-4 h-4" /> Military-Grade Encryption
               </div>
               <div className="flex items-center gap-2">
-                <Zap className="w-4 h-4" /> < 50ms Latency
+                <Zap className="w-4 h-4" /> &lt; 50ms Latency
               </div>
               <div className="flex items-center gap-2">
                 <Users className="w-4 h-4" /> HIPAA Compliant
