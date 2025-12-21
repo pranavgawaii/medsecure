@@ -1,0 +1,155 @@
+{
+  "version": 3,
+  "pages404": true,
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "priority": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [],
+    "fallback": []
+  },
+  "dynamicRoutes": [
+    {
+      "page": "/api/vitals/patient/[id]",
+      "regex": "^/api/vitals/patient/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/vitals/patient/(?<nxtPid>[^/]+?)(?:/)?$"
+    }
+  ],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/_global-error",
+      "regex": "^/_global\\-error(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_global\\-error(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/ambulance",
+      "regex": "^/ambulance(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/ambulance(?:/)?$"
+    },
+    {
+      "page": "/api/alerts/acknowledge",
+      "regex": "^/api/alerts/acknowledge(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/alerts/acknowledge(?:/)?$"
+    },
+    {
+      "page": "/api/alerts/active",
+      "regex": "^/api/alerts/active(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/alerts/active(?:/)?$"
+    },
+    {
+      "page": "/api/auth/login",
+      "regex": "^/api/auth/login(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/auth/login(?:/)?$"
+    },
+    {
+      "page": "/api/auth/logout",
+      "regex": "^/api/auth/logout(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/auth/logout(?:/)?$"
+    },
+    {
+      "page": "/api/init-db",
+      "regex": "^/api/init\\-db(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/init\\-db(?:/)?$"
+    },
+    {
+      "page": "/api/patients/with-vitals",
+      "regex": "^/api/patients/with\\-vitals(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/patients/with\\-vitals(?:/)?$"
+    },
+    {
+      "page": "/api/vitals/all",
+      "regex": "^/api/vitals/all(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/vitals/all(?:/)?$"
+    },
+    {
+      "page": "/api/vitals/latest",
+      "regex": "^/api/vitals/latest(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/vitals/latest(?:/)?$"
+    },
+    {
+      "page": "/api/vitals/transmit",
+      "regex": "^/api/vitals/transmit(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/vitals/transmit(?:/)?$"
+    },
+    {
+      "page": "/api/vitals/verify-encryption",
+      "regex": "^/api/vitals/verify\\-encryption(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/vitals/verify\\-encryption(?:/)?$"
+    },
+    {
+      "page": "/api-docs",
+      "regex": "^/api\\-docs(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api\\-docs(?:/)?$"
+    },
+    {
+      "page": "/dashboard",
+      "regex": "^/dashboard(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard(?:/)?$"
+    },
+    {
+      "page": "/simulator",
+      "regex": "^/simulator(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/simulator(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSuffix": ".prefetch.rsc",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments",
+    "clientParamParsing": false,
+    "dynamicRSCPrerender": false
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  }
+}

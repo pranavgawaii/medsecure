@@ -1,0 +1,20 @@
+{
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/ambulance/page": "app/ambulance/page.js",
+  "/api-docs/page": "app/api-docs/page.js",
+  "/api/alerts/acknowledge/route": "app/api/alerts/acknowledge/route.js",
+  "/api/alerts/active/route": "app/api/alerts/active/route.js",
+  "/api/auth/login/route": "app/api/auth/login/route.js",
+  "/api/auth/logout/route": "app/api/auth/logout/route.js",
+  "/api/init-db/route": "app/api/init-db/route.js",
+  "/api/patients/with-vitals/route": "app/api/patients/with-vitals/route.js",
+  "/api/vitals/all/route": "app/api/vitals/all/route.js",
+  "/api/vitals/latest/route": "app/api/vitals/latest/route.js",
+  "/api/vitals/patient/[id]/route": "app/api/vitals/patient/[id]/route.js",
+  "/api/vitals/transmit/route": "app/api/vitals/transmit/route.js",
+  "/api/vitals/verify-encryption/route": "app/api/vitals/verify-encryption/route.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/page": "app/page.js",
+  "/simulator/page": "app/simulator/page.js"
+}

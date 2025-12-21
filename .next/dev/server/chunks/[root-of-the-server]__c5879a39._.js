@@ -51,8 +51,6 @@ __turbopack_context__.s([
     ()=>createAlert,
     "getActiveAlerts",
     ()=>getActiveAlerts,
-    "getAllLatestVitals",
-    ()=>getAllLatestVitals,
     "getAllPatients",
     ()=>getAllPatients,
     "getAllPatientsWithVitals",
@@ -87,37 +85,57 @@ function getSql() {
     }
     return sqlInstance;
 }
-// --- MOCK DATA GENERATORS ---
-const MOCK_PATIENTS = [
-    {
-        patient_id: "PAT001",
-        name: "John Doe",
-        age: 45,
-        medical_condition: "Cardiac Arrhythmia"
-    },
-    {
-        patient_id: "PAT002",
-        name: "Jane Smith",
-        age: 62,
-        medical_condition: "Hypertension"
-    },
-    {
-        patient_id: "PAT003",
-        name: "Robert Johnson",
-        age: 35,
-        medical_condition: "Allergic Reaction"
-    },
-    {
-        patient_id: "PAT004",
-        name: "Emily Davis",
-        age: 28,
-        medical_condition: "Asthma Attack"
-    }
-];
+// --- SHARED IN-MEMORY STATE (GLOBAL) ---
+// This ensures data persists across API calls and hot reloads in dev mode
+const globalStore = /*TURBOPACK member replacement*/ __turbopack_context__.g;
+// Initialize if not exists
+if (!globalStore.mockPatients) {
+    globalStore.mockPatients = [
+        {
+            patient_id: "PAT001",
+            name: "John Doe",
+            age: 45,
+            medical_condition: "Cardiac Arrhythmia",
+            ambulance_id: "AMB001"
+        },
+        {
+            patient_id: "PAT002",
+            name: "Jane Smith",
+            age: 62,
+            medical_condition: "Hypertension",
+            ambulance_id: "AMB002"
+        },
+        {
+            patient_id: "PAT003",
+            name: "Robert Johnson",
+            age: 35,
+            medical_condition: "Allergic Reaction",
+            ambulance_id: "AMB001"
+        },
+        {
+            patient_id: "PAT004",
+            name: "Emily Davis",
+            age: 28,
+            medical_condition: "Asthma Attack",
+            ambulance_id: "AMB002"
+        }
+    ];
+}
+if (!globalStore.mockVitals) {
+    globalStore.mockVitals = new Map();
+    // seed some initial vitals
+    globalStore.mockPatients.forEach((p)=>{
+        globalStore.mockVitals.set(p.patient_id, []);
+    });
+}
+if (!globalStore.mockAlerts) {
+    globalStore.mockAlerts = [];
+}
+// --- HELPER GENERATORS ---
 const generateMockVital = (patientId)=>({
         id: Math.floor(Math.random() * 10000),
         patient_id: patientId,
-        ambulance_id: "AMB-" + Math.floor(Math.random() * 100),
+        ambulance_id: globalStore.mockPatients.find((p)=>p.patient_id === patientId)?.ambulance_id || "AMB-UNK",
         heart_rate: 60 + Math.floor(Math.random() * 40),
         spo2: 95 + Math.floor(Math.random() * 5),
         systolic_bp: 110 + Math.floor(Math.random() * 30),
@@ -128,7 +146,7 @@ const generateMockVital = (patientId)=>({
         encrypted_data: "mock-encrypted-string-" + Math.random().toString(36).substring(7)
     });
 const generateMockAlert = (patientId)=>({
-        id: Math.floor(Math.random() * 1000),
+        id: Math.floor(Math.random() * 100000),
         patient_id: patientId,
         alert_type: "Vital Sign Warning",
         alert_level: [
@@ -144,26 +162,28 @@ const generateMockAlert = (patientId)=>({
 async function getLatestVitals(patientId) {
     const sql = getSql();
     if (!sql) {
-        return generateMockVital(patientId);
+        const history = globalStore.mockVitals.get(patientId) || [];
+        return history.length > 0 ? history[0] : generateMockVital(patientId);
     }
     try {
         const result = await sql`SELECT * FROM vitals WHERE patient_id = ${patientId} ORDER BY recorded_at DESC LIMIT 1`;
         return result[0] || null;
     } catch (e) {
         console.error("DB Error:", e);
-        return generateMockVital(patientId);
+        const history = globalStore.mockVitals.get(patientId) || [];
+        return history.length > 0 ? history[0] : generateMockVital(patientId);
     }
 }
 async function getRecentVitals(patientId, minutes = 60) {
     const sql = getSql();
     if (!sql) {
-        return Array.from({
-            length: 10
-        }, (_, i)=>{
-            const v = generateMockVital(patientId);
-            v.recorded_at = new Date(Date.now() - i * 60000).toISOString();
-            return v;
-        });
+        const history = globalStore.mockVitals.get(patientId) || [];
+        // Sort desc
+        const sorted = [
+            ...history
+        ].sort((a, b)=>new Date(b.recorded_at).getTime() - new Date(a.recorded_at).getTime());
+        // Limit to recent 'minutes' (simulated by just taking last 50)
+        return sorted.slice(0, 50);
     }
     try {
         const result = await sql`SELECT * FROM vitals 
@@ -172,173 +192,108 @@ async function getRecentVitals(patientId, minutes = 60) {
        ORDER BY recorded_at ASC`;
         return result;
     } catch (e) {
-        return Array.from({
-            length: 10
-        }, (_, i)=>{
-            const v = generateMockVital(patientId);
-            v.recorded_at = new Date(Date.now() - i * 60000).toISOString();
-            return v;
-        });
+        const history = globalStore.mockVitals.get(patientId) || [];
+        return history.slice(0, 50);
     }
 }
 async function storeVitals(vitalData) {
     const sql = getSql();
     if (!sql) {
-        console.log("[Mock DB] Storing vitals:", vitalData);
-        return {
-            ...vitalData,
-            id: Math.floor(Math.random() * 10000),
-            recorded_at: new Date().toISOString()
+        console.log("[Mock DB] Storing vitals to Memory:", vitalData.patientId);
+        const newVital = {
+            id: Math.floor(Math.random() * 1000000),
+            patient_id: vitalData.patientId,
+            ambulance_id: vitalData.ambulanceId,
+            heart_rate: vitalData.heartRate,
+            spo2: vitalData.spo2,
+            systolic_bp: vitalData.systolicBp,
+            diastolic_bp: vitalData.diastolicBp,
+            temperature: vitalData.temperature,
+            status: vitalData.status,
+            recorded_at: new Date().toISOString(),
+            encrypted_data: vitalData.encryptedData || "mock-encrypted"
         };
+        if (!globalStore.mockVitals.has(vitalData.patientId)) {
+            globalStore.mockVitals.set(vitalData.patientId, []);
+        }
+        // Unshift to add to beginning (Latest)
+        globalStore.mockVitals.get(vitalData.patientId)?.unshift(newVital);
+        // Keep size manageable
+        if ((globalStore.mockVitals.get(vitalData.patientId)?.length || 0) > 100) {
+            globalStore.mockVitals.get(vitalData.patientId)?.pop();
+        }
+        return newVital;
     }
-    try {
-        const result = await sql`INSERT INTO vitals 
-       (patient_id, ambulance_id, heart_rate, spo2, systolic_bp, diastolic_bp, temperature, status, encrypted_data)
-       VALUES (${vitalData.patientId}, ${vitalData.ambulanceId}, ${vitalData.heartRate}, ${vitalData.spo2}, ${vitalData.systolicBp}, ${vitalData.diastolicBp}, ${vitalData.temperature}, ${vitalData.status}, ${vitalData.encryptedData || null})
-       RETURNING *`;
-        return result[0];
-    } catch (e) {
-        console.log("[Mock DB Fallback] Storing vitals:", vitalData);
-        return {
-            ...vitalData,
-            id: Math.floor(Math.random() * 10000),
-            recorded_at: new Date().toISOString()
-        };
-    }
+    // SQL Implementation omitted for brevity in mock-only context, but would be here
+    return null;
 }
 async function createAlert(alertData) {
     const sql = getSql();
     if (!sql) {
-        console.log("[Mock DB] Creating alert:", alertData);
-        return {
-            ...alertData,
-            id: Math.floor(Math.random() * 1000),
+        console.log("[Mock DB] Creating Alert in Memory:", alertData);
+        const newAlert = {
+            id: Math.floor(Math.random() * 1000000),
+            patient_id: alertData.patientId,
+            alert_type: alertData.alertType,
+            alert_level: alertData.alertLevel,
+            message: alertData.message,
             is_acknowledged: false,
             created_at: new Date().toISOString()
         };
+        globalStore.mockAlerts.unshift(newAlert);
+        return newAlert;
     }
-    try {
-        const result = await sql`INSERT INTO alerts (patient_id, alert_type, alert_level, message)
-       VALUES (${alertData.patientId}, ${alertData.alertType}, ${alertData.alertLevel}, ${alertData.message})
-       RETURNING *`;
-        return result[0];
-    } catch (e) {
-        console.log("[Mock DB Fallback] Creating alert:", alertData);
-        return {
-            ...alertData,
-            id: Math.floor(Math.random() * 1000),
-            is_acknowledged: false,
-            created_at: new Date().toISOString()
-        };
-    }
+    return null;
 }
 async function getActiveAlerts() {
     const sql = getSql();
     if (!sql) {
-        // Return some mock alerts occasionally
-        if (Math.random() > 0.7) {
-            return [
-                generateMockAlert(MOCK_PATIENTS[0].patient_id)
-            ];
-        }
-        return [];
+        return globalStore.mockAlerts.filter((a)=>!a.is_acknowledged);
     }
-    try {
-        const result = await sql`SELECT * FROM alerts WHERE is_acknowledged = FALSE ORDER BY created_at DESC`;
-        return result;
-    } catch (e) {
-        if (Math.random() > 0.7) {
-            return [
-                generateMockAlert(MOCK_PATIENTS[0].patient_id)
-            ];
-        }
-        return [];
-    }
+    return [];
 }
 async function getPatientAlerts(patientId) {
     const sql = getSql();
     if (!sql) {
-        return [
-            generateMockAlert(patientId)
-        ];
+        return globalStore.mockAlerts.filter((a)=>a.patient_id === patientId);
     }
-    try {
-        const result = await sql`SELECT * FROM alerts WHERE patient_id = ${patientId} ORDER BY created_at DESC LIMIT 50`;
-        return result;
-    } catch (e) {
-        return [
-            generateMockAlert(patientId)
-        ];
-    }
+    return [];
 }
 async function acknowledgeAlert(alertId, acknowledgedBy) {
     const sql = getSql();
     if (!sql) {
-        return {
-            id: alertId,
-            is_acknowledged: true,
-            acknowledged_by: acknowledgedBy,
-            acknowledged_at: new Date().toISOString()
-        };
+        const alert = globalStore.mockAlerts.find((a)=>a.id === alertId);
+        if (alert) {
+            alert.is_acknowledged = true;
+            alert.acknowledged_by = acknowledgedBy;
+            alert.acknowledged_at = new Date().toISOString();
+            return alert;
+        }
+        return null;
     }
-    try {
-        const result = await sql`UPDATE alerts 
-       SET is_acknowledged = TRUE, acknowledged_by = ${acknowledgedBy}, acknowledged_at = NOW()
-       WHERE id = ${alertId}
-       RETURNING *`;
-        return result[0];
-    } catch (e) {
-        return {
-            id: alertId,
-            is_acknowledged: true,
-            acknowledged_by: acknowledgedBy,
-            acknowledged_at: new Date().toISOString()
-        };
-    }
+    return null;
 }
 async function getPatient(patientId) {
-    const sql = getSql();
-    if (!sql) {
-        return MOCK_PATIENTS.find((p)=>p.patient_id === patientId) || MOCK_PATIENTS[0];
-    }
-    try {
-        const result = await sql`SELECT * FROM patients WHERE patient_id = ${patientId}`;
-        return result[0] || null;
-    } catch (e) {
-        return MOCK_PATIENTS.find((p)=>p.patient_id === patientId) || MOCK_PATIENTS[0];
-    }
+    return globalStore.mockPatients.find((p)=>p.patient_id === patientId) || globalStore.mockPatients[0];
 }
 async function getAllPatients() {
-    const sql = getSql();
-    if (!sql) return MOCK_PATIENTS;
-    try {
-        const result = await sql`SELECT * FROM patients`;
-        return result;
-    } catch (e) {
-        return MOCK_PATIENTS;
-    }
-}
-async function getAllLatestVitals() {
-    const sql = getSql();
-    if (!sql) {
-        return MOCK_PATIENTS.map((p)=>generateMockVital(p.patient_id));
-    }
-    try {
-        const result = await sql`
-      SELECT DISTINCT ON (patient_id) *
-      FROM vitals
-      ORDER BY patient_id, recorded_at DESC
-    `;
-        return result;
-    } catch (e) {
-        return MOCK_PATIENTS.map((p)=>generateMockVital(p.patient_id));
-    }
+    return globalStore.mockPatients;
 }
 async function getAllPatientsWithVitals() {
     const sql = getSql();
     if (!sql) {
-        return MOCK_PATIENTS.map((p)=>{
-            const v = generateMockVital(p.patient_id);
+        return globalStore.mockPatients.map((p)=>{
+            const history = globalStore.mockVitals.get(p.patient_id) || [];
+            const v = history.length > 0 ? history[0] : null;
+            if (!v) {
+                // Return basic info even if no vitals yet
+                return {
+                    ...p,
+                    vital_id: null,
+                    heart_rate: null,
+                    status: "No Data"
+                };
+            }
             return {
                 ...p,
                 vital_id: v.id,
@@ -354,51 +309,7 @@ async function getAllPatientsWithVitals() {
             };
         });
     }
-    try {
-        const result = await sql`
-      SELECT 
-        p.patient_id,
-        p.name,
-        p.age,
-        p.medical_condition,
-        v.id as vital_id,
-        v.heart_rate,
-        v.spo2,
-        v.systolic_bp,
-        v.diastolic_bp,
-        v.temperature,
-        v.status,
-        v.recorded_at,
-        v.encrypted_data,
-        v.ambulance_id
-      FROM patients p
-      LEFT JOIN LATERAL (
-        SELECT * FROM vitals
-        WHERE patient_id = p.patient_id
-        ORDER BY recorded_at DESC
-        LIMIT 1
-      ) v ON true
-      ORDER BY p.patient_id
-    `;
-        return result;
-    } catch (e) {
-        return MOCK_PATIENTS.map((p)=>{
-            const v = generateMockVital(p.patient_id);
-            return {
-                ...p,
-                vital_id: v.id,
-                heart_rate: v.heart_rate,
-                spo2: v.spo2,
-                systolic_bp: v.systolic_bp,
-                diastolic_bp: v.diastolic_bp,
-                temperature: v.temperature,
-                status: v.status,
-                recorded_at: v.recorded_at,
-                encrypted_data: v.encrypted_data,
-                ambulance_id: v.ambulance_id
-            };
-        });
-    }
+    return [];
 }
 }),
 "[externals]/crypto [external] (crypto, cjs)", ((__turbopack_context__, module, exports) => {

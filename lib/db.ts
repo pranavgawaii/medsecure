@@ -251,6 +251,29 @@ export async function getAllPatients() {
 }
 
 /**
+ * Fetches all latest vitals for all patients grouped by patient
+ */
+export async function getAllLatestVitals() {
+  const sql = getSql()
+  if (!sql) {
+    return globalStore.mockPatients.map(p => {
+      const history = globalStore.mockVitals.get(p.patient_id) || [];
+      return history.length > 0 ? history[0] : generateMockVital(p.patient_id);
+    });
+  }
+  try {
+    const result = await sql`
+      SELECT DISTINCT ON (patient_id) *
+      FROM vitals
+      ORDER BY patient_id, recorded_at DESC
+    `
+    return result
+  } catch (e) {
+    return globalStore.mockPatients.map(p => generateMockVital(p.patient_id));
+  }
+}
+
+/**
  * Fetches all patients with their latest vitals
  */
 export async function getAllPatientsWithVitals() {

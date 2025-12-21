@@ -18,16 +18,42 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Activity, Shield, Zap, TrendingUp, Users, ArrowRight, Lock, Loader2, Ambulance, Building2 } from "lucide-react"
 
-export default function Home() {
+import { Suspense } from "react"
+
+function HomeContent() {
   const [isLoginOpen, setIsLoginOpen] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [role, setRole] = useState("hospital") // 'hospital' | 'ambulance'
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   const router = useRouter()
   const searchParams = useSearchParams()
+
+  useEffect(() => {
+    // Check auth status
+    const checkAuth = () => {
+      const cookie = document.cookie;
+      const loggedIn = cookie.includes("auth-token");
+      setIsLoggedIn(loggedIn);
+
+      if (loggedIn) {
+        try {
+          const match = cookie.match(/auth-token=([^;]+)/);
+          if (match) {
+            const decoded = atob(decodeURIComponent(match[1]));
+            const data = JSON.parse(decoded);
+            setRole(data.role || "hospital");
+          }
+        } catch (e) {
+          console.error("Failed to parse role", e);
+        }
+      }
+    }
+    checkAuth()
+  }, [])
 
   useEffect(() => {
     if (searchParams.get("login") === "required") {
@@ -155,24 +181,55 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-16 pb-32">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-100 via-slate-50 to-slate-50 dark:from-blue-950 dark:via-slate-950 dark:to-slate-950 -z-10" />
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="text-center space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 mb-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <Shield className="w-4 h-4" />
-              <span className="text-sm font-medium">Secure IoT Medical Data Transmission</span>
-            </div>
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-slate-900 dark:text-white mb-6 animate-in fade-in slide-in-from-bottom-8 duration-700">
-              Real-Time Vitals <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">
-                Secured & Delivered
-              </span>
-            </h1>
-            <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-10 animate-in fade-in slide-in-from-bottom-12 duration-1000">
-              Connect ambulances, monitor patients, and secure data with military-grade encryption. The future of emergency response is here.
-            </p>
-            <div className="flex items-center gap-2">
-              <Users className="w-4 h-4" /> HIPAA Compliant
-            </div>
+        <div className="container mx-auto px-4 text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 mb-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <Shield className="w-4 h-4" />
+            <span className="text-sm font-medium">Secure IoT Medical Data Transmission</span>
+          </div>
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-slate-900 dark:text-white mb-6 animate-in fade-in slide-in-from-bottom-8 duration-700">
+            Real-Time Vitals <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">
+              Secured & Delivered
+            </span>
+          </h1>
+          <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-10 animate-in fade-in slide-in-from-bottom-12 duration-1000">
+            Connect ambulances, monitor patients, and secure data with military-grade encryption. The future of emergency response is here.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 animate-in fade-in slide-in-from-bottom-16 duration-1000">
+            {isLoggedIn ? (
+              role === 'hospital' ? (
+                <Button
+                  size="lg"
+                  onClick={() => router.push('/dashboard')}
+                  className="h-14 px-8 text-lg rounded-full bg-blue-600 hover:bg-blue-700 shadow-xl shadow-blue-500/20 transition-all hover:scale-105"
+                >
+                  Go to Hospital Dashboard
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </Button>
+              ) : (
+                <Button
+                  size="lg"
+                  onClick={() => router.push('/ambulance')}
+                  className="h-14 px-8 text-lg rounded-full bg-red-600 hover:bg-red-700 shadow-xl shadow-red-500/20 transition-all hover:scale-105"
+                >
+                  Go to Ambulance Console
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </Button>
+              )
+            ) : (
+              <Button
+                size="lg"
+                onClick={() => setIsLoginOpen(true)}
+                className="h-14 px-8 text-lg rounded-full bg-blue-600 hover:bg-blue-700 shadow-xl shadow-blue-500/20 transition-all hover:scale-105"
+              >
+                Get Started Now
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+            )}
+
+            <Button size="lg" variant="outline" className="h-14 px-8 text-lg rounded-full border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800">
+              View Documentation
+            </Button>
           </div>
         </div>
       </section>
@@ -245,5 +302,13 @@ export default function Home() {
         </div>
       </section>
     </main>
+  )
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-50 dark:bg-slate-950" />}>
+      <HomeContent />
+    </Suspense>
   )
 }

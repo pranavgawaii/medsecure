@@ -1,0 +1,20 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/ambulance/page": "/ambulance",
+  "/api-docs/page": "/api-docs",
+  "/api/alerts/acknowledge/route": "/api/alerts/acknowledge",
+  "/api/alerts/active/route": "/api/alerts/active",
+  "/api/auth/login/route": "/api/auth/login",
+  "/api/auth/logout/route": "/api/auth/logout",
+  "/api/init-db/route": "/api/init-db",
+  "/api/patients/with-vitals/route": "/api/patients/with-vitals",
+  "/api/vitals/all/route": "/api/vitals/all",
+  "/api/vitals/latest/route": "/api/vitals/latest",
+  "/api/vitals/patient/[id]/route": "/api/vitals/patient/[id]",
+  "/api/vitals/transmit/route": "/api/vitals/transmit",
+  "/api/vitals/verify-encryption/route": "/api/vitals/verify-encryption",
+  "/dashboard/page": "/dashboard",
+  "/page": "/",
+  "/simulator/page": "/simulator"
+}

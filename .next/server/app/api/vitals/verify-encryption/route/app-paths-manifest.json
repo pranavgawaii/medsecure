@@ -1,0 +1,3 @@
+{
+  "/api/vitals/verify-encryption/route": "app/api/vitals/verify-encryption/route.js"
+}
