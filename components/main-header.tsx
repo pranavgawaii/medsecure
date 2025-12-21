@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { Activity, Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { ModeToggle } from "@/components/mode-toggle"
 import { useState } from "react"
 
 export function MainHeader() {
@@ -35,19 +36,23 @@ export function MainHeader() {
               API Docs
             </Button>
           </Link>
+          <ModeToggle />
         </div>
 
         {/* Mobile Navigation Toggle */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="md:hidden p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
-        >
-          {isOpen ? (
-            <X className="w-5 h-5 text-slate-900 dark:text-white" />
-          ) : (
-            <Menu className="w-5 h-5 text-slate-900 dark:text-white" />
-          )}
-        </button>
+        <div className="flex items-center gap-2 md:hidden">
+          <ModeToggle />
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+          >
+            {isOpen ? (
+              <X className="w-5 h-5 text-slate-900 dark:text-white" />
+            ) : (
+              <Menu className="w-5 h-5 text-slate-900 dark:text-white" />
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}

@@ -1,0 +1,8 @@
+{
+  "/api-docs/page": "app/api-docs/page.js",
+  "/api/init-db/route": "app/api/init-db/route.js",
+  "/api/vitals/latest/route": "app/api/vitals/latest/route.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/page": "app/page.js",
+  "/simulator/page": "app/simulator/page.js"
+}
