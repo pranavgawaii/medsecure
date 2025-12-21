@@ -1,15 +1,115 @@
 "use client"
 
 import Link from "next/link"
+import { useState, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { MainHeader } from "@/components/main-header"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Activity, Shield, Zap, TrendingUp, Users, ArrowRight, Lock } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Activity, Shield, Zap, TrendingUp, Users, ArrowRight, Lock, Loader2 } from "lucide-react"
 
 export default function Home() {
+  const [isLoginOpen, setIsLoginOpen] = useState(false)
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState("")
+
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    if (searchParams.get("login") === "required") {
+      setIsLoginOpen(true)
+    }
+  }, [searchParams])
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    setError("")
+
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      })
+
+      if (res.ok) {
+        // Force hard reload or just push to update auth state across components
+        // A refresh ensures checking cookies again
+        window.location.href = "/dashboard"
+      } else {
+        setError("Invalid credentials. Try demo/demo")
+      }
+    } catch (err) {
+      setError("Login failed. Please try again.")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return (
     <main className="min-h-screen bg-slate-50 dark:bg-slate-950">
-      <MainHeader />
+      <MainHeader onLoginClick={() => setIsLoginOpen(true)} />
+
+      <Dialog open={isLoginOpen} onOpenChange={setIsLoginOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Login to MedSecure24</DialogTitle>
+            <DialogDescription>
+              Enter your credentials to access the secure dashboard.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleLogin} className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="text"
+                placeholder="doctor@hospital.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Password</Label>
+                <span className="text-xs text-blue-600 cursor-pointer hover:underline">Forgot password?</span>
+              </div>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+            {error && <p className="text-sm text-red-500 font-medium">{error}</p>}
+
+            <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded text-xs text-slate-600 dark:text-slate-400">
+              <p><strong>Demo Credentials:</strong></p>
+              <p>Any email / Any password</p>
+            </div>
+
+            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700" disabled={isLoading}>
+              {isLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+              Sign In
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-16 pb-32">
@@ -32,17 +132,23 @@ export default function Home() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
-              <Link href="/dashboard">
-                <Button size="lg" className="h-14 px-8 text-lg rounded-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 shadow-lg shadow-blue-500/25 transition-all hover:scale-105">
-                  Access Dashboard
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Button>
-              </Link>
-              <Link href="/simulator">
-                <Button size="lg" variant="outline" className="h-14 px-8 text-lg rounded-full border-2 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
-                  Try Simulator
-                </Button>
-              </Link>
+              <Button
+                size="lg"
+                onClick={() => setIsLoginOpen(true)}
+                className="h-14 px-8 text-lg rounded-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 shadow-lg shadow-blue-500/25 transition-all hover:scale-105"
+              >
+                Access Dashboard
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+
+              <Button
+                size="lg"
+                variant="outline"
+                onClick={() => setIsLoginOpen(true)}
+                className="h-14 px-8 text-lg rounded-full border-2 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+              >
+                Try Simulator
+              </Button>
             </div>
 
             <div className="pt-12 flex items-center justify-center gap-8 text-slate-400 dark:text-slate-500 text-sm font-medium">
@@ -118,11 +224,13 @@ export default function Home() {
         <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
           <h2 className="text-3xl md:text-5xl font-bold mb-6">Ready to Modernize Emergency Care?</h2>
           <p className="text-slate-300 text-lg mb-10 max-w-2xl mx-auto">Join the network of smart ambulances and hospitals saving lives with data.</p>
-          <Link href="/dashboard">
-            <Button size="lg" className="h-14 px-10 text-lg rounded-full bg-white text-slate-900 hover:bg-slate-100 hover:scale-105 transition-all font-semibold">
-              Get Started Now
-            </Button>
-          </Link>
+          <Button
+            size="lg"
+            onClick={() => setIsLoginOpen(true)}
+            className="h-14 px-10 text-lg rounded-full bg-white text-slate-900 hover:bg-slate-100 hover:scale-105 transition-all font-semibold"
+          >
+            Get Started Now
+          </Button>
         </div>
       </section>
     </main>

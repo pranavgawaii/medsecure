@@ -1,7 +1,12 @@
 {
+  "/_not-found/page": "app/_not-found/page.js",
   "/api-docs/page": "app/api-docs/page.js",
-  "/api/init-db/route": "app/api/init-db/route.js",
+  "/api/alerts/active/route": "app/api/alerts/active/route.js",
+  "/api/auth/login/route": "app/api/auth/login/route.js",
+  "/api/patients/with-vitals/route": "app/api/patients/with-vitals/route.js",
   "/api/vitals/latest/route": "app/api/vitals/latest/route.js",
+  "/api/vitals/transmit/route": "app/api/vitals/transmit/route.js",
+  "/api/vitals/verify-encryption/route": "app/api/vitals/verify-encryption/route.js",
   "/dashboard/page": "app/dashboard/page.js",
   "/page": "app/page.js",
   "/simulator/page": "app/simulator/page.js"
