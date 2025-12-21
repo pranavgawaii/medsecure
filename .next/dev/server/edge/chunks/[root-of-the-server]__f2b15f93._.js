@@ -29,7 +29,8 @@ function middleware(request) {
     // Protected routes
     const protectedRoutes = [
         "/dashboard",
-        "/simulator"
+        "/simulator",
+        "/ambulance"
     ];
     const isProtectedRoute = protectedRoutes.some((route)=>pathname.startsWith(route));
     // If trying to access a protected route without a token

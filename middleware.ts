@@ -6,7 +6,7 @@ export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl
 
     // Protected routes
-    const protectedRoutes = ["/dashboard", "/simulator"]
+    const protectedRoutes = ["/dashboard", "/simulator", "/ambulance"]
     const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route))
 
     // If trying to access a protected route without a token

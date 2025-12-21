@@ -70,8 +70,18 @@ async function POST(request) {
         // Set a mock session cookie
         // Expire in 1 day
         const oneDay = 24 * 60 * 60 * 1000;
-        response.cookies.set("auth-token", "mock-jwt-token-" + Date.now(), {
-            httpOnly: true,
+        const role = body.role || "hospital" // Default to hospital if not provided
+        ;
+        // Store role in the token value (simplified for demo) or a separate claim
+        // For this demo, we'll just store a simple JSON string to easily parse client-side if needed, 
+        // or just rely on cookie presence. Let's make the cookie value richer.
+        const tokenPayload = JSON.stringify({
+            role,
+            email,
+            timestamp: Date.now()
+        });
+        response.cookies.set("auth-token", Buffer.from(tokenPayload).toString('base64'), {
+            httpOnly: false,
             secure: ("TURBOPACK compile-time value", "development") === "production",
             sameSite: "strict",
             maxAge: oneDay,

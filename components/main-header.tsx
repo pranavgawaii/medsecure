@@ -13,10 +13,30 @@ export function MainHeader({ onLoginClick }: { onLoginClick?: () => void }) {
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
 
+  const [userRole, setUserRole] = useState("hospital")
+
   useEffect(() => {
     // Simple cookie check (not perfect but enough for UI state)
     const checkAuth = () => {
-      setIsLoggedIn(document.cookie.includes("auth-token"))
+      const cookie = document.cookie;
+      const isLoggedIn = cookie.includes("auth-token");
+      setIsLoggedIn(isLoggedIn);
+
+      if (isLoggedIn) {
+        // Try to parse role
+        // This is a quick hack for the demo since we base64 encoded the JSON
+        try {
+          const match = cookie.match(/auth-token=([^;]+)/);
+          if (match) {
+            const decoded = atob(decodeURIComponent(match[1]));
+            const data = JSON.parse(decoded);
+            setUserRole(data.role || "hospital");
+          }
+        } catch (e) {
+          console.error("Failed to parse role", e);
+        }
+      }
+
       setIsLoading(false)
     }
     checkAuth()
@@ -49,18 +69,22 @@ export function MainHeader({ onLoginClick }: { onLoginClick?: () => void }) {
         <div className="hidden md:flex gap-4 items-center">
           {isLoggedIn ? (
             <>
-              <Link href="/dashboard">
-                <Button variant="ghost" size="sm" className="text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white group">
-                  <LayoutDashboard className="w-4 h-4 mr-2 group-hover:text-blue-500" />
-                  Dashboard
-                </Button>
-              </Link>
-              <Link href="/simulator">
-                <Button variant="ghost" size="sm" className="text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white group">
-                  <Database className="w-4 h-4 mr-2 group-hover:text-cyan-500" />
-                  Simulator
-                </Button>
-              </Link>
+              {userRole === 'hospital' ? (
+                <Link href="/dashboard">
+                  <Button variant="ghost" size="sm" className="text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white group">
+                    <LayoutDashboard className="w-4 h-4 mr-2 group-hover:text-blue-500" />
+                    Dashboard
+                  </Button>
+                </Link>
+              ) : (
+                <Link href="/ambulance">
+                  <Button variant="ghost" size="sm" className="text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white group">
+                    <Database className="w-4 h-4 mr-2 group-hover:text-red-500" />
+                    Ambulance Console
+                  </Button>
+                </Link>
+              )}
+
               <Button onClick={handleLogout} variant="ghost" size="sm" className="text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800">
                 <LogOut className="w-4 h-4 mr-2" />
                 Logout
