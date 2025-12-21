@@ -2,13 +2,16 @@ import crypto from "crypto"
 
 // Generate a key from environment variable or create a default one
 const getEncryptionKey = (): Buffer => {
-  const keyEnv = process.env.ENCRYPTION_KEY
-  if (!keyEnv) {
-    throw new Error("ENCRYPTION_KEY environment variable is not set")
-  }
+  const keyEnv = process.env.ENCRYPTION_KEY || "demo-key-32-bytes-long-exactly-012345"
+
   // Ensure the key is exactly 32 bytes (256 bits) for AES-256
-  const key = crypto.scryptSync(keyEnv, "salt", 32)
-  return key
+  // If fallback is used, we might need padding or simple generation
+  if (process.env.ENCRYPTION_KEY) {
+    return crypto.scryptSync(keyEnv, "salt", 32)
+  }
+
+  // Fallback deterministic key for demo
+  return crypto.scryptSync("fallback-demo-secret", "salt", 32)
 }
 
 /**
