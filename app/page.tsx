@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { MainHeader } from "@/components/main-header"
@@ -374,8 +375,15 @@ function HomeContent() {
               </div>
               <div className="w-full md:w-1/2 bg-slate-100 dark:bg-slate-900 rounded-2xl p-8 border border-slate-200 dark:border-slate-800">
                 {/* Placeholder for workflow graphic */}
-                <div className="aspect-video bg-white dark:bg-slate-800 rounded-lg shadow-sm flex items-center justify-center">
-                  <Activity className="w-16 h-16 text-slate-300" />
+                {/* Workflow Graphic */}
+                <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm flex items-center justify-center overflow-hidden">
+                  <Image
+                    src="/workflow-diagram.png"
+                    alt="Seamless Data Workflow"
+                    width={800}
+                    height={600}
+                    className="w-full h-auto object-cover hover:scale-105 transition-transform duration-500"
+                  />
                 </div>
               </div>
             </div>
@@ -386,7 +394,11 @@ function HomeContent() {
         <section className="py-20 bg-slate-900 text-white">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight">Ready to modernize your emergency response?</h2>
-            <p className="text-blue-100 text-lg mb-10 max-w-2xl mx-auto">Join the network of forward-thinking hospitals and ambulance fleets. Save time, save lives.</p>
+            <p className="text-blue-100 text-lg mb-10 max-w-3xl mx-auto leading-relaxed">
+              Join the network of forward-thinking hospitals and ambulance fleets.
+              <br className="hidden md:block" />
+              <span className="font-semibold text-white">Save time, save lives.</span>
+            </p>
             <Button
               size="lg"
               onClick={() => setIsLoginOpen(true)}
