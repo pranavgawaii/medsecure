@@ -394,9 +394,9 @@ function HomeContent() {
         <section className="py-20 bg-slate-900 text-white">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight">Ready to modernize your emergency response?</h2>
-            <p className="text-blue-100 text-lg mb-10 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-center text-blue-100 text-lg mb-10 max-w-3xl mx-auto leading-relaxed">
               Join the network of forward-thinking hospitals and ambulance fleets.
-              <br className="hidden md:block" />
+              <br />
               <span className="font-semibold text-white">Save time, save lives.</span>
             </p>
             <Button
