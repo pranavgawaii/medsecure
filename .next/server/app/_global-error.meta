@@ -9,6 +9,7 @@
     "/_tree",
     "/_full",
     "/__PAGE__",
-    "/_index"
+    "/_index",
+    "/_head"
   ]
 }

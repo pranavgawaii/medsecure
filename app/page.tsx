@@ -16,7 +16,22 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Activity, Shield, Zap, TrendingUp, Users, ArrowRight, Lock, Loader2, Ambulance, Building2 } from "lucide-react"
+import {
+  Activity,
+  Shield,
+  Zap,
+  TrendingUp,
+  Users,
+  ArrowRight,
+  Lock,
+  Loader2,
+  Ambulance,
+  Building2,
+  CheckCircle2,
+  Globe,
+  Server,
+  HeartPulse
+} from "lucide-react"
 
 import { Suspense } from "react"
 
@@ -91,7 +106,7 @@ function HomeContent() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 dark:bg-slate-950">
+    <div className="flex flex-col min-h-screen bg-white dark:bg-slate-950">
       <MainHeader onLoginClick={() => setIsLoginOpen(true)} />
 
       <Dialog open={isLoginOpen} onOpenChange={setIsLoginOpen}>
@@ -178,130 +193,254 @@ function HomeContent() {
         </DialogContent>
       </Dialog>
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden pt-16 pb-32">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-100 via-slate-50 to-slate-50 dark:from-blue-950 dark:via-slate-950 dark:to-slate-950 -z-10" />
-        <div className="container mx-auto px-4 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 mb-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <Shield className="w-4 h-4" />
-            <span className="text-sm font-medium">Secure IoT Medical Data Transmission</span>
-          </div>
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-slate-900 dark:text-white mb-6 animate-in fade-in slide-in-from-bottom-8 duration-700">
-            Real-Time Vitals <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">
-              Secured & Delivered
-            </span>
-          </h1>
-          <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-10 animate-in fade-in slide-in-from-bottom-12 duration-1000">
-            Connect ambulances, monitor patients, and secure data with military-grade encryption. The future of emergency response is here.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 animate-in fade-in slide-in-from-bottom-16 duration-1000">
-            {isLoggedIn ? (
-              role === 'hospital' ? (
-                <Button
-                  size="lg"
-                  onClick={() => router.push('/dashboard')}
-                  className="h-14 px-8 text-lg rounded-full bg-blue-600 hover:bg-blue-700 shadow-xl shadow-blue-500/20 transition-all hover:scale-105"
-                >
-                  Go to Hospital Dashboard
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Button>
-              ) : (
-                <Button
-                  size="lg"
-                  onClick={() => router.push('/ambulance')}
-                  className="h-14 px-8 text-lg rounded-full bg-red-600 hover:bg-red-700 shadow-xl shadow-red-500/20 transition-all hover:scale-105"
-                >
-                  Go to Ambulance Console
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Button>
-              )
-            ) : (
-              <Button
-                size="lg"
-                onClick={() => setIsLoginOpen(true)}
-                className="h-14 px-8 text-lg rounded-full bg-blue-600 hover:bg-blue-700 shadow-xl shadow-blue-500/20 transition-all hover:scale-105"
-              >
-                Get Started Now
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
-            )}
+      <main className="flex-1">
+        {/* Hero Section */}
+        <section className="relative pt-20 pb-32 md:pt-32 overflow-hidden">
+          <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-100/50 via-slate-50 to-white dark:from-blue-950/50 dark:via-slate-950 dark:to-slate-950" />
 
-            <Button size="lg" variant="outline" className="h-14 px-8 text-lg rounded-full border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800">
-              View Documentation
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              <div className="flex flex-col gap-6 text-center lg:text-left">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 text-blue-700 dark:text-blue-300 w-fit mx-auto lg:mx-0">
+                  <Shield className="w-3.5 h-3.5" />
+                  <span className="text-xs font-semibold uppercase tracking-wide">Secure IoT Medical Data</span>
+                </div>
+
+                <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.1]">
+                  Emergency care, <br />
+                  <span className="text-blue-600">accelerated by data.</span>
+                </h1>
+
+                <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                  Real-time vital transmission from ambulance to hospital. Secure, reliable, and life-saving. Connect your fleet today with military-grade encryption.
+                </p>
+
+                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4">
+                  {isLoggedIn ? (
+                    role === 'hospital' ? (
+                      <Button onClick={() => router.push('/dashboard')} size="lg" className="h-12 px-8 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-semibold shadow-lg shadow-blue-500/20">
+                        Hospital Dashboard <ArrowRight className="ml-2 w-4 h-4" />
+                      </Button>
+                    ) : (
+                      <Button onClick={() => router.push('/ambulance')} size="lg" className="h-12 px-8 bg-red-600 hover:bg-red-700 text-white rounded-md font-semibold shadow-lg shadow-red-500/20">
+                        Ambulance Console <ArrowRight className="ml-2 w-4 h-4" />
+                      </Button>
+                    )
+                  ) : (
+                    <Button onClick={() => setIsLoginOpen(true)} size="lg" className="h-12 px-8 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-semibold shadow-lg shadow-blue-500/20">
+                      Get Started <ArrowRight className="ml-2 w-4 h-4" />
+                    </Button>
+                  )}
+                  <Button variant="outline" size="lg" className="h-12 px-8 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900 rounded-md font-semibold">
+                    Live Demo
+                  </Button>
+                </div>
+
+                <div className="flex items-center gap-8 justify-center lg:justify-start pt-8 text-slate-500 dark:text-slate-500 text-sm font-medium">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-blue-500" />
+                    <span>HIPAA Compliant</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-blue-500" />
+                    <span>99.9% Uptime</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-blue-500" />
+                    <span>End-to-End Encrypted</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="relative mx-auto lg:ml-auto w-full max-w-lg lg:max-w-none">
+                {/* Abstract visual representation */}
+                <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 aspect-video lg:aspect-square flex items-center justify-center">
+                  <div className="absolute inset-0 bg-slate-50 dark:bg-slate-900 opacity-50 patterned-background"></div>
+                  <div className="relative z-10 grid grid-cols-2 gap-4 p-8">
+                    <div className="bg-red-50 dark:bg-red-900/10 p-6 rounded-xl border border-red-100 dark:border-red-900/20 flex flex-col items-center">
+                      <div className="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mb-3">
+                        <Ambulance className="w-6 h-6 text-red-600" />
+                      </div>
+                      <span className="text-sm font-semibold text-slate-900 dark:text-white">Ambulance</span>
+                      <span className="text-xs text-slate-500">Transmitting Data</span>
+                    </div>
+                    <div className="bg-blue-50 dark:bg-blue-900/10 p-6 rounded-xl border border-blue-100 dark:border-blue-900/20 flex flex-col items-center">
+                      <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-3">
+                        <Building2 className="w-6 h-6 text-blue-600" />
+                      </div>
+                      <span className="text-sm font-semibold text-slate-900 dark:text-white">Hospital</span>
+                      <span className="text-xs text-slate-500">Receiving Live Vitals</span>
+                    </div>
+                  </div>
+                  {/* Animated Connection Line */}
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[200px] h-1 bg-gradient-to-r from-red-200 via-blue-200 to-blue-200 rounded-full overflow-hidden">
+                    <div className="w-1/2 h-full bg-blue-500 animate-slide-right"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Features Section */}
+        <section className="py-24 bg-slate-50 dark:bg-slate-900/50">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="text-center max-w-3xl mx-auto mb-16">
+              <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white mb-4">
+                Critical features for critical moments
+              </h2>
+              <p className="text-lg text-slate-600 dark:text-slate-400">
+                Designed for speed, security, and reliability. MedSecure24 bridges the gap between emergency response and hospital readiness.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              <Card className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
+                <CardHeader>
+                  <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mb-4">
+                    <HeartPulse className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <CardTitle className="text-xl">Real-Time Vitals</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-slate-600 dark:text-slate-400">
+                    Live streaming of heart rate, BP, SPO2, and ECG data allows doctors to prepare before the patient arrives.
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
+                <CardHeader>
+                  <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center mb-4">
+                    <Lock className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+                  </div>
+                  <CardTitle className="text-xl">Bank-Grade Security</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-slate-600 dark:text-slate-400">
+                    AES-256 bit encryption and strict access controls ensure that sensitive patient data never falls into the wrong hands.
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
+                <CardHeader>
+                  <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center mb-4">
+                    <Zap className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+                  </div>
+                  <CardTitle className="text-xl">Instant Alerts</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-slate-600 dark:text-slate-400">
+                    Automated triage suggestions and priority alerts help emergency departments manage incoming caseloads effectively.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* How it Works Section */}
+        <section className="py-24 bg-white dark:bg-slate-950">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-16">
+              <div className="w-full md:w-1/2">
+                <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white mb-6">
+                  Seamless Integration Workflow
+                </h2>
+                <div className="space-y-8">
+                  <div className="flex gap-4">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">1</div>
+                    <div>
+                      <h3 className="font-semibold text-lg text-slate-900 dark:text-white">Paramedic Connects Device</h3>
+                      <p className="text-slate-600 dark:text-slate-400">IoT sensors are attached to the patient in the ambulance. Connection is established instantly.</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-4">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">2</div>
+                    <div>
+                      <h3 className="font-semibold text-lg text-slate-900 dark:text-white">Secure Encrypted Transmission</h3>
+                      <p className="text-slate-600 dark:text-slate-400">Data is encrypted locally and transmitted via stable 4G/5G networks to the cloud.</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-4">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">3</div>
+                    <div>
+                      <h3 className="font-semibold text-lg text-slate-900 dark:text-white">Hospital Monitoring</h3>
+                      <p className="text-slate-600 dark:text-slate-400">Doctors view live feeds on the dashboard and prepare the trauma team accordingly.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="w-full md:w-1/2 bg-slate-100 dark:bg-slate-900 rounded-2xl p-8 border border-slate-200 dark:border-slate-800">
+                {/* Placeholder for workflow graphic */}
+                <div className="aspect-video bg-white dark:bg-slate-800 rounded-lg shadow-sm flex items-center justify-center">
+                  <Activity className="w-16 h-16 text-slate-300" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="py-20 bg-slate-900 text-white">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight">Ready to modernize your emergency response?</h2>
+            <p className="text-blue-100 text-lg mb-10 max-w-2xl mx-auto">Join the network of forward-thinking hospitals and ambulance fleets. Save time, save lives.</p>
+            <Button
+              size="lg"
+              onClick={() => setIsLoginOpen(true)}
+              className="h-14 px-10 text-lg rounded-md bg-blue-600 hover:bg-blue-500 text-white font-semibold shadow-xl shadow-blue-900/20"
+            >
+              Get Started Now
             </Button>
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
 
-      {/* Features Grid */}
-      <section className="py-24 bg-white dark:bg-slate-900">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">Why MedSecure24?</h2>
-            <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">Built for critical moments where every second counts. Our platform ensures data integrity, speed, and reliability.</p>
+      {/* Footer */}
+      <footer className="py-12 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="grid md:grid-cols-4 gap-8 mb-8">
+            <div className="col-span-1 md:col-span-1">
+              <div className="font-bold text-xl mb-4 flex items-center gap-2">
+                <Shield className="w-6 h-6 text-blue-600" />
+                MedSecure24
+              </div>
+              <p className="text-sm text-slate-500">
+                Advanced IoT solutions for the healthcare sector.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4">Platform</h4>
+              <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+                <li><a href="#" className="hover:text-blue-600">Features</a></li>
+                <li><a href="#" className="hover:text-blue-600">Ambulance App</a></li>
+                <li><a href="#" className="hover:text-blue-600">Hospital Dashboard</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4">Company</h4>
+              <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+                <li><a href="#" className="hover:text-blue-600">About Us</a></li>
+                <li><a href="#" className="hover:text-blue-600">Careers</a></li>
+                <li><a href="#" className="hover:text-blue-600">Contact</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4">Legal</h4>
+              <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+                <li><a href="#" className="hover:text-blue-600">Privacy Policy</a></li>
+                <li><a href="#" className="hover:text-blue-600">Terms of Service</a></li>
+              </ul>
+            </div>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card className="border-0 shadow-lg bg-slate-50 dark:bg-slate-800/50 hover:-translate-y-1 transition-transform duration-300">
-              <CardHeader>
-                <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mb-4">
-                  <Activity className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                </div>
-                <CardTitle>Real-Time Vitals</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-slate-600 dark:text-slate-400">Stream heart rate, SPO2, and BP directly from device to dashboard with sub-second latency.</p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-lg bg-slate-50 dark:bg-slate-800/50 hover:-translate-y-1 transition-transform duration-300">
-              <CardHeader>
-                <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center mb-4">
-                  <Lock className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                </div>
-                <CardTitle>End-to-End Encrypted</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-slate-600 dark:text-slate-400">AES-256 encryption ensures patient data remains private and secure during transmission.</p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-lg bg-slate-50 dark:bg-slate-800/50 hover:-translate-y-1 transition-transform duration-300">
-              <CardHeader>
-                <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center mb-4">
-                  <TrendingUp className="w-6 h-6 text-green-600 dark:text-green-400" />
-                </div>
-                <CardTitle>Smart Analytics</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-slate-600 dark:text-slate-400">Automated triage and alert system identifies critical patients before arrival.</p>
-              </CardContent>
-            </Card>
+          <div className="border-t border-slate-200 dark:border-slate-800 pt-8 text-center text-sm text-slate-500">
+            © {new Date().getFullYear()} MedSecure24. All rights reserved.
           </div>
         </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-24 bg-slate-900 text-white overflow-hidden relative">
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 opacity-20">
-          <div className="absolute -top-[50%] -left-[20%] w-[1000px] h-[1000px] rounded-full bg-blue-600 blur-3xl"></div>
-          <div className="absolute -bottom-[50%] -right-[20%] w-[800px] h-[800px] rounded-full bg-purple-600 blur-3xl"></div>
-        </div>
-
-        <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
-          <h2 className="text-3xl md:text-5xl font-bold mb-6">Ready to Modernize Emergency Care?</h2>
-          <p className="text-slate-300 text-lg mb-10 max-w-2xl mx-auto">Join the network of smart ambulances and hospitals saving lives with data.</p>
-          <Button
-            size="lg"
-            onClick={() => setIsLoginOpen(true)}
-            className="h-14 px-10 text-lg rounded-full bg-white text-slate-900 hover:bg-slate-100 hover:scale-105 transition-all font-semibold"
-          >
-            Get Started Now
-          </Button>
-        </div>
-      </section>
-    </main>
+      </footer>
+    </div>
   )
 }
 

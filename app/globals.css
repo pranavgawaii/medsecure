@@ -203,4 +203,26 @@
   .transition-smooth {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
+
+  @keyframes slide-right {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(200%);
+    }
+  }
+
+  .animate-slide-right {
+    animation: slide-right 3s linear infinite;
+  }
+
+  .patterned-background {
+    background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+  
+  .dark .patterned-background {
+    background-image: radial-gradient(#1e293b 1px, transparent 1px);
+  }
 }

@@ -9,6 +9,7 @@
     "/_full",
     "/dashboard/__PAGE__",
     "/dashboard",
-    "/_index"
+    "/_index",
+    "/_head"
   ]
 }

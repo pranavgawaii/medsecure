@@ -9,6 +9,7 @@
     "/_full",
     "/simulator/__PAGE__",
     "/simulator",
-    "/_index"
+    "/_index",
+    "/_head"
   ]
 }

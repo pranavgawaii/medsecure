@@ -9,6 +9,7 @@
     "/_full",
     "/ambulance/__PAGE__",
     "/ambulance",
-    "/_index"
+    "/_index",
+    "/_head"
   ]
 }

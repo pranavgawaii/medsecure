@@ -9,6 +9,7 @@
     "/_full",
     "/api-docs/__PAGE__",
     "/api-docs",
-    "/_index"
+    "/_index",
+    "/_head"
   ]
 }
