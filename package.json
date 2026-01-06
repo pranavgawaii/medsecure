@@ -9,6 +9,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@clerk/nextjs": "^6.36.5",
     "@hookform/resolvers": "^3.10.0",
     "@neondatabase/serverless": "latest",
     "@radix-ui/react-accordion": "1.2.2",
@@ -46,6 +47,7 @@
     "crypto": "latest",
     "date-fns": "4.1.0",
     "embla-carousel-react": "8.5.1",
+    "framer-motion": "^12.24.7",
     "input-otp": "1.4.1",
     "lucide-react": "^0.454.0",
     "next": "^16.1.0",
