@@ -6,7 +6,8 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "echo 'Skipping lint for deployment'",
-    "start": "next start"
+    "start": "next start",
+    "preview": "npm run build && npm run start"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.36.5",
