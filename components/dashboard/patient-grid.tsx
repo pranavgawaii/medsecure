@@ -1,8 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Card } from "@/components/ui/card"
-import { Activity, Zap, Thermometer, AlertCircle } from "lucide-react"
+import { Activity, Zap, Thermometer } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 
 interface Patient {
@@ -20,53 +20,12 @@ interface Patient {
 export function PatientGrid({
   selectedPatient,
   onSelectPatient,
+  patients,
 }: {
   selectedPatient: string | null
   onSelectPatient: (patientId: string) => void
+  patients: any[]
 }) {
-  const [patients, setPatients] = useState<Patient[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    const fetchPatients = async () => {
-      try {
-        setLoading(true)
-        setError(null)
-        const response = await fetch("/api/patients/with-vitals")
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch patients: ${response.statusText}`)
-        }
-
-        const data = await response.json()
-        const formattedPatients = data.patients.map((p: any) => ({
-          id: p.id,
-          name: p.name,
-          status: p.status,
-          vitals: {
-            heartRate: p.vitals.heartRate,
-            spo2: p.vitals.spo2,
-            temperature: p.vitals.temperature,
-            recordedAt: p.vitals.recordedAt,
-          },
-        }))
-
-        setPatients(formattedPatients)
-      } catch (error) {
-        console.error("Error fetching patients:", error)
-        setError(error instanceof Error ? error.message : "Failed to fetch patients")
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchPatients()
-
-    const interval = setInterval(fetchPatients, 3000)
-
-    return () => clearInterval(interval)
-  }, [])
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -94,19 +53,7 @@ export function PatientGrid({
     }
   }
 
-  if (error) {
-    return (
-      <div className="bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-300 p-4 rounded-lg flex items-start gap-2">
-        <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-        <div>
-          <p className="font-semibold">Error loading patients</p>
-          <p className="text-sm">{error}</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (loading && patients.length === 0) {
+  if (!patients || patients.length === 0) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {Array.from({ length: 3 }).map((_, i) => (
